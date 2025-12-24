@@ -2,8 +2,11 @@ package com.algaworks.algasensors.temperature_processing.api.controller;
 
 import com.algaworks.algasensors.temperature_processing.api.model.TemperatureLogOutput;
 import com.algaworks.algasensors.temperature_processing.common.IdGenerator;
+import com.algaworks.algasensors.temperature_processing.infrastructure.rabbitmq.RabbitMQExchangeEnum;
 import io.hypersistence.tsid.TSID;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +17,10 @@ import java.time.OffsetDateTime;
 @Slf4j
 @RestController
 @RequestMapping("api/sensors/{sensorId}/temperatures/data")
+@RequiredArgsConstructor
 public class TemperatureProcessingController {
+
+    private final RabbitTemplate rabbitTemplate;
 
     @PostMapping(consumes = MediaType.TEXT_PLAIN_VALUE)
     public void data(@PathVariable TSID sensorId, @RequestBody String input) {
@@ -38,6 +44,9 @@ public class TemperatureProcessingController {
                 .build();
 
         log.info("New temperature log created: {}", logOutput);
+
+        rabbitTemplate.convertAndSend(RabbitMQExchangeEnum.FANNOUT_EXCHANGE_NAME.getExchangeName(),
+                "", logOutput);
 
     }
 }
