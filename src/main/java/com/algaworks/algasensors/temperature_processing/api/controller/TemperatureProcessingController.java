@@ -6,6 +6,7 @@ import com.algaworks.algasensors.temperature_processing.infrastructure.rabbitmq.
 import io.hypersistence.tsid.TSID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -45,8 +46,12 @@ public class TemperatureProcessingController {
 
         log.info("New temperature log created: {}", logOutput);
 
+        MessagePostProcessor messagePostProcessor = (MessagePostProcessor) message -> {
+            message.getMessageProperties().setHeader("sensorId", logOutput.getSensorId().toString());
+            return message;
+        };
         rabbitTemplate.convertAndSend(RabbitMQExchangeEnum.FANNOUT_EXCHANGE_NAME.getExchangeName(),
-                "", logOutput);
+                "", logOutput, messagePostProcessor);
 
     }
 }

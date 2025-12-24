@@ -1,5 +1,8 @@
 package com.algaworks.algasensors.temperature_processing.infrastructure.rabbitmq;
 
+import lombok.Getter;
+
+@Getter
 public enum RabbitMQExchangeEnum {
 
     FANNOUT_EXCHANGE_NAME("temperature-processing.temperature-received.v1.e");
@@ -8,9 +11,5 @@ public enum RabbitMQExchangeEnum {
 
     RabbitMQExchangeEnum(String exchangeName) {
         this.exchangeName = exchangeName;
-    }
-
-    public String getExchangeName() {
-        return exchangeName;
     }
 }
