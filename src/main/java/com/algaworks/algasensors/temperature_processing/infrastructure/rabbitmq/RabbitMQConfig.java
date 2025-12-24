@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tools.jackson.databind.json.JsonMapper;
 
+import static com.algaworks.algasensors.temperature_processing.infrastructure.rabbitmq.RabbitMQExchangeConstants.FANNOUT_EXCHANGE_NAME;
+
 @Configuration
 public class RabbitMQConfig {
 
@@ -24,6 +26,6 @@ public class RabbitMQConfig {
 
     @Bean
     public FanoutExchange exchange() {
-        return ExchangeBuilder.fanoutExchange(RabbitMQExchangeEnum.FANNOUT_EXCHANGE_NAME.getExchangeName()).build();
+        return ExchangeBuilder.fanoutExchange(FANNOUT_EXCHANGE_NAME).build();
     }
 }

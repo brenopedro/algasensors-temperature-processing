@@ -2,7 +2,6 @@ package com.algaworks.algasensors.temperature_processing.api.controller;
 
 import com.algaworks.algasensors.temperature_processing.api.model.TemperatureLogOutput;
 import com.algaworks.algasensors.temperature_processing.common.IdGenerator;
-import com.algaworks.algasensors.temperature_processing.infrastructure.rabbitmq.RabbitMQExchangeEnum;
 import io.hypersistence.tsid.TSID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.OffsetDateTime;
+
+import static com.algaworks.algasensors.temperature_processing.infrastructure.rabbitmq.RabbitMQExchangeConstants.FANNOUT_EXCHANGE_NAME;
 
 @Slf4j
 @RestController
@@ -50,7 +51,7 @@ public class TemperatureProcessingController {
             message.getMessageProperties().setHeader("sensorId", logOutput.getSensorId().toString());
             return message;
         };
-        rabbitTemplate.convertAndSend(RabbitMQExchangeEnum.FANNOUT_EXCHANGE_NAME.getExchangeName(),
+        rabbitTemplate.convertAndSend(FANNOUT_EXCHANGE_NAME,
                 "", logOutput, messagePostProcessor);
 
     }
